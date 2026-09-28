@@ -8,6 +8,8 @@ services:
       MYSQL_DATABASE: test_db
       MYSQL_USER: devops
       MYSQL_PASSWORD: devops123
+    ports:
+      - "3307:3306"
     volumes:
       - db-data:/var/lib/mysql
     networks:
