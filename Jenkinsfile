@@ -49,6 +49,15 @@ pipeline {
             }
         }
 
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'U', passwordVariable: 'P')]) {
+                    sh 'echo $P | docker login -u $U --password-stdin'
+                }
+            }
+        }
+
         stage('Build Docker Images') {
             steps {
                 sh "docker build -t ${BACK_IMAGE}:${TAG} -t ${BACK_IMAGE}:latest ./backend"
@@ -58,14 +67,10 @@ pipeline {
 
         stage('Push Images') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
-                        usernameVariable: 'U', passwordVariable: 'P')]) {
-                    sh 'echo $P | docker login -u $U --password-stdin'
-                    sh "docker push ${BACK_IMAGE}:${TAG}"
-                    sh "docker push ${BACK_IMAGE}:latest"
-                    sh "docker push ${FRONT_IMAGE}:${TAG}"
-                    sh "docker push ${FRONT_IMAGE}:latest"
-                }
+                sh "docker push ${BACK_IMAGE}:${TAG}"
+                sh "docker push ${BACK_IMAGE}:latest"
+                sh "docker push ${FRONT_IMAGE}:${TAG}"
+                sh "docker push ${FRONT_IMAGE}:latest"
             }
         }
 
