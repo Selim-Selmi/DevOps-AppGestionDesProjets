@@ -74,16 +74,32 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Déploiement MySQL') {
             steps {
-                sh 'docker compose down || true'
-                sh 'docker compose up -d --build'
+                sh 'docker compose up -d db'
+                sh 'sleep 15'
+            }
+        }
+
+        stage('Déploiement Backend & Frontend') {
+            steps {
+                sh 'docker compose up -d --build backend frontend'
+            }
+        }
+
+        stage('Vérification du déploiement') {
+            steps {
+                sh 'docker ps'
+                sh 'docker logs backend'
             }
         }
     }
 
     post {
-        always { sh 'docker logout || true' }
+        always {
+            sh 'docker logout || true'
+            sh 'docker image prune -f'   // removes untagged/dangling layers
+        }
         success { echo 'Pipeline OK: app is on http://localhost:4200' }
         failure { echo 'Pipeline FAILED: check the console output' }
     }
