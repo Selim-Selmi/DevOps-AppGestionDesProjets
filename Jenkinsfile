@@ -90,7 +90,7 @@ pipeline {
         stage('Vérification du déploiement') {
             steps {
                 sh 'docker ps'
-                sh 'docker logs backend'
+                sh 'docker logs appprojets-backend-1'
             }
         }
     }
