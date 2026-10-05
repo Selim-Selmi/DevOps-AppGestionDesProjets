@@ -98,7 +98,6 @@ pipeline {
     post {
         always {
             sh 'docker logout || true'
-            sh 'docker image prune -f'   // removes untagged/dangling layers
         }
         success { echo 'Pipeline OK: app is on http://localhost:4200' }
         failure { echo 'Pipeline FAILED: check the console output' }
